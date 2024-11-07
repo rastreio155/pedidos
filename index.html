@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastreio de Pedido</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            box-sizing: border-box;
+        }
+        .input-group input[type="button"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .input-group input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        .info-text {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        #YQContainer {
+            margin-top: 20px;
+            width: 100%;
+            height: 500px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 30px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Rastreio de Pedido</h1>
+    <p class="info-text">Preencha o código de rastreio abaixo para conferir o status de seu pedido.</p>
+
+    <div class="input-group">
+        <input type="text" id="YQNum" maxlength="50" placeholder="Código de Rastreio" value="AB123456789CD" />
+        <input type="button" class="btn btn-primary" value="Rastrear" onclick="doTrack()" />
+    </div>
+
+    <div id="YQContainer"></div>
+
+    <!-- Botão de retorno para o site -->
+    <a href="https://modafitmaria.lojavirtualnuvem.com.br/" class="back-button">Voltar para a loja</a>
+</div>
+
+<!-- Script para rastreio - 17track -->
+<script>
+if(document.getElementById('YQContainer')){
+
+    var scriptRastreio = document.createElement('script');
+    scriptRastreio.src = "https://www.17track.net/externalcall.js";
+    document.body.appendChild(scriptRastreio);
+
+    scriptRastreio.onload = function() {
+        console.log('Script de Rastreio do 17Track Carregado!');
+    };
+
+    function doTrack() {
+        var num = document.getElementById("YQNum").value;
+        if(num===""){
+            alert("Por favor preencha o código de rastreio corretamente.");
+            return;
+        }
+        // Inicia o rastreio com o código inserido pelo usuário
+        YQV5.trackSingle({
+            YQ_ContainerId: "YQContainer", // Elemento onde será exibido o rastreio
+            YQ_Height: 600, // Altura do container de rastreio
+            YQ_Fc: "0", // Desabilita a exibição de informações adicionais
+            YQ_Lang: "pt", // Define a língua para português
+            YQ_Num: num // Código de rastreio inserido
+        });
+    }
+}
+</script>
+
+</body>
+</html>
