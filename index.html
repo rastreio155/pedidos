@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rastreamento de Encomenda</title>
+    <title>Rastreamento de Pacotes</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,15 +42,11 @@
         button:hover {
             background-color: #0056b3;
         }
-        #result {
+        iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
             margin-top: 20px;
-        }
-        #result pre {
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 4px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
         }
     </style>
 </head>
@@ -59,36 +55,22 @@
 <div class="container">
     <h1>Rastreamento de Encomenda</h1>
     <input type="text" id="trackingNumber" placeholder="Digite o código de rastreamento">
-    <button onclick="trackPackage()">Rastrear</button>
-    <div id="result"></div>
+    <button onclick="updateIframe()">Rastrear</button>
+
+    <!-- Iframe que será atualizado dinamicamente -->
+    <iframe id="trackingIframe" title="Widget de rastreamento de pacotes" src="https://postal.ninja/widget/tracker" frameborder="0"></iframe>
 </div>
 
 <script>
-    async function trackPackage() {
+    function updateIframe() {
         const trackingNumber = document.getElementById('trackingNumber').value;
-        const resultContainer = document.getElementById('result');
+        const iframe = document.getElementById('trackingIframe');
 
-        if (!trackingNumber) {
-            resultContainer.innerHTML = "<p style='color: red;'>Por favor, insira um número de rastreamento.</p>";
-            return;
-        }
-
-        resultContainer.innerHTML = "<p>Carregando...</p>";
-
-        try {
-            // Exemplo de API com base no Postal Ninja (substitua pela sua URL/API real)
-            const apiUrl = `https://api.postal.ninja/v1/track?code=${trackingNumber}`;
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-
-            if (data.status === 'error') {
-                resultContainer.innerHTML = "<p style='color: red;'>Número de rastreamento não encontrado.</p>";
-                return;
-            }
-
-            resultContainer.innerHTML = `<h3>Detalhes do Rastreamento:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
-        } catch (error) {
-            resultContainer.innerHTML = "<p style='color: red;'>Erro ao tentar rastrear o número. Tente novamente mais tarde.</p>";
+        if (trackingNumber) {
+            // Atualiza o URL do iframe com o número de rastreamento inserido
+            iframe.src = `https://postal.ninja/widget/tracker?tracking_number=${trackingNumber}`;
+        } else {
+            alert('Por favor, insira um número de rastreamento.');
         }
     }
 </script>
