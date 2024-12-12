@@ -58,7 +58,7 @@
             font-size: 14px;
             margin-bottom: 20px;
         }
-        #YQContainer {
+        #rastreioContainer {
             margin-top: 20px;
             width: 100%;
             height: 500px;
@@ -94,7 +94,7 @@
         <input type="button" class="btn btn-primary" value="Rastrear" onclick="doTrack()" />
     </div>
 
-    <div id="YQContainer"></div>
+    <div id="rastreioContainer"></div>
 
     <!-- Botão de retorno para o site -->
     <a href="https://modafitmaria.lojavirtualnuvem.com.br/" class="back-button">Voltar para a loja</a>
@@ -109,11 +109,20 @@
             return;
         }
 
-        // Substitui o link para o serviço Postal Ninja
+        // Gera a URL do Postal Ninja para rastreio
         var trackUrl = "https://postal.ninja/pt/track#/" + num;
 
-        // Abre o link de rastreio em uma nova aba
-        window.open(trackUrl, "_blank");
+        // Insere um iframe dentro do div para exibir o rastreio na mesma página
+        var iframe = document.createElement('iframe');
+        iframe.src = trackUrl;
+        iframe.style.width = "100%";
+        iframe.style.height = "500px";
+        iframe.style.border = "none";
+        
+        // Limpa o conteúdo anterior e adiciona o iframe
+        var container = document.getElementById("rastreioContainer");
+        container.innerHTML = "";  // Limpa o conteúdo anterior
+        container.appendChild(iframe);  // Adiciona o iframe com o rastreio
     }
 </script>
 
