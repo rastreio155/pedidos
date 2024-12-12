@@ -61,10 +61,12 @@
         #rastreioContainer {
             margin-top: 20px;
             width: 100%;
-            height: 500px;
+            height: auto;
             background-color: #f0f0f0;
             border-radius: 10px;
             overflow: hidden;
+            padding: 20px;
+            text-align: left;
         }
         .back-button {
             display: inline-block;
@@ -90,39 +92,52 @@
     <p class="info-text">Preencha o código de rastreio abaixo para conferir o status de seu pedido.</p>
 
     <div class="input-group">
-        <input type="text" id="YQNum" maxlength="50" placeholder="Código de Rastreio" value="AB123456789CD" />
-        <input type="button" class="btn btn-primary" value="Rastrear" onclick="doTrack()" />
+        <input type="text" id="trackingNumber" maxlength="50" placeholder="Código de Rastreio" value="" />
+        <input type="button" value="Rastrear" onclick="trackOrder()" />
     </div>
 
     <div id="rastreioContainer"></div>
 
-    <!-- Botão de retorno para o site -->
     <a href="https://modafitmaria.lojavirtualnuvem.com.br/" class="back-button">Voltar para a loja</a>
 </div>
 
-<!-- Script para rastreio com Postal Ninja -->
+<!-- Script para buscar e exibir o rastreio -->
 <script>
-    function doTrack() {
-        var num = document.getElementById("YQNum").value;
-        if (num === "") {
-            alert("Por favor, preencha o código de rastreio corretamente.");
+    function trackOrder() {
+        const trackingNumber = document.getElementById("trackingNumber").value;
+
+        if (trackingNumber === "") {
+            alert("Por favor, insira um código de rastreio.");
             return;
         }
 
-        // Gera a URL do Postal Ninja para rastreio
-        var trackUrl = "https://postal.ninja/pt/track#/" + num;
+        const apiKey = "SUA_API_KEY_DO_POSTAL_NINJA"; // Substitua com sua chave de API
+        const apiUrl = `https://api.postal.ninja/v1/track/${trackingNumber}?api_key=${apiKey}`;
 
-        // Cria o iframe com a URL do Postal Ninja
-        var iframe = document.createElement('iframe');
-        iframe.src = trackUrl;
-        iframe.style.width = "100%";
-        iframe.style.height = "500px";
-        iframe.style.border = "none";
-        
-        // Limpa o conteúdo anterior e adiciona o iframe
-        var container = document.getElementById("rastreioContainer");
-        container.innerHTML = "";  // Limpa o conteúdo anterior
-        container.appendChild(iframe);  // Adiciona o iframe com o rastreio
+        // Realiza a requisição à API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.status === 'success') {
+                    displayTrackingInfo(data);
+                } else {
+                    document.getElementById("rastreioContainer").innerHTML = "Código de rastreio não encontrado ou erro ao buscar informações.";
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao consultar API de rastreio:', error);
+                document.getElementById("rastreioContainer").innerHTML = "Erro ao tentar obter informações de rastreio. Tente novamente.";
+            });
+    }
+
+    function displayTrackingInfo(data) {
+        const container = document.getElementById("rastreioContainer");
+        container.innerHTML = `<h2>Status do Rastreio</h2>`;
+
+        // Exibindo as informações de rastreio
+        data.tracking_info.forEach(item => {
+            container.innerHTML += `<p><strong>${item.date}:</strong> ${item.status}</p>`;
+        });
     }
 </script>
 
