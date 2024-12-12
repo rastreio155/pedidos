@@ -1,143 +1,95 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rastreio de Pedido</title>
+    <title>Rastreamento de Encomenda</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
         .container {
-            background-color: #ffffff;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 500px;
-            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h1 {
-            color: #333;
-            margin-bottom: 20px;
+            text-align: center;
         }
-        .input-group {
-            margin-bottom: 20px;
-        }
-        .input-group input[type="text"] {
-            width: 70%;
+        input[type="text"] {
+            width: 100%;
             padding: 10px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-right: 10px;
-            box-sizing: border-box;
+            border-radius: 4px;
         }
-        .input-group input[type="button"] {
-            padding: 10px 20px;
+        button {
+            width: 100%;
+            padding: 10px;
             background-color: #007bff;
-            color: white;
+            color: #fff;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s;
         }
-        .input-group input[type="button"]:hover {
+        button:hover {
             background-color: #0056b3;
         }
-        .info-text {
-            color: #555;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        #rastreioContainer {
+        #result {
             margin-top: 20px;
-            width: 100%;
-            height: auto;
+        }
+        #result pre {
             background-color: #f0f0f0;
-            border-radius: 10px;
-            overflow: hidden;
-            padding: 20px;
-            text-align: left;
-        }
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin-top: 30px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .back-button:hover {
-            background-color: #218838;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Rastreio de Pedido</h1>
-    <p class="info-text">Preencha o código de rastreio abaixo para conferir o status de seu pedido.</p>
-
-    <div class="input-group">
-        <input type="text" id="trackingNumber" maxlength="50" placeholder="Código de Rastreio" value="" />
-        <input type="button" value="Rastrear" onclick="trackOrder()" />
-    </div>
-
-    <div id="rastreioContainer"></div>
-
-    <a href="https://modafitmaria.lojavirtualnuvem.com.br/" class="back-button">Voltar para a loja</a>
+    <h1>Rastreamento de Encomenda</h1>
+    <input type="text" id="trackingNumber" placeholder="Digite o código de rastreamento">
+    <button onclick="trackPackage()">Rastrear</button>
+    <div id="result"></div>
 </div>
 
-<!-- Script para buscar e exibir o rastreio -->
 <script>
-    function trackOrder() {
-        const trackingNumber = document.getElementById("trackingNumber").value;
+    async function trackPackage() {
+        const trackingNumber = document.getElementById('trackingNumber').value;
+        const resultContainer = document.getElementById('result');
 
-        if (trackingNumber === "") {
-            alert("Por favor, insira um código de rastreio.");
+        if (!trackingNumber) {
+            resultContainer.innerHTML = "<p style='color: red;'>Por favor, insira um número de rastreamento.</p>";
             return;
         }
 
-        const apiKey = "SUA_API_KEY_DO_POSTAL_NINJA"; // Substitua com sua chave de API
-        const apiUrl = `https://api.postal.ninja/v1/track/${trackingNumber}?api_key=${apiKey}`;
+        resultContainer.innerHTML = "<p>Carregando...</p>";
 
-        // Realiza a requisição à API
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.status === 'success') {
-                    displayTrackingInfo(data);
-                } else {
-                    document.getElementById("rastreioContainer").innerHTML = "Código de rastreio não encontrado ou erro ao buscar informações.";
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao consultar API de rastreio:', error);
-                document.getElementById("rastreioContainer").innerHTML = "Erro ao tentar obter informações de rastreio. Tente novamente.";
-            });
-    }
+        try {
+            // Exemplo de API com base no Postal Ninja (substitua pela sua URL/API real)
+            const apiUrl = `https://api.postal.ninja/v1/track?code=${trackingNumber}`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
 
-    function displayTrackingInfo(data) {
-        const container = document.getElementById("rastreioContainer");
-        container.innerHTML = `<h2>Status do Rastreio</h2>`;
+            if (data.status === 'error') {
+                resultContainer.innerHTML = "<p style='color: red;'>Número de rastreamento não encontrado.</p>";
+                return;
+            }
 
-        // Exibindo as informações de rastreio
-        data.tracking_info.forEach(item => {
-            container.innerHTML += `<p><strong>${item.date}:</strong> ${item.status}</p>`;
-        });
+            resultContainer.innerHTML = `<h3>Detalhes do Rastreamento:</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } catch (error) {
+            resultContainer.innerHTML = "<p style='color: red;'>Erro ao tentar rastrear o número. Tente novamente mais tarde.</p>";
+        }
     }
 </script>
 
