@@ -100,34 +100,21 @@
     <a href="https://modafitmaria.lojavirtualnuvem.com.br/" class="back-button">Voltar para a loja</a>
 </div>
 
-<!-- Script para rastreio - 17track -->
+<!-- Script para rastreio com Postal Ninja -->
 <script>
-if(document.getElementById('YQContainer')){
-
-    var scriptRastreio = document.createElement('script');
-    scriptRastreio.src = "https://www.17track.net/externalcall.js";
-    document.body.appendChild(scriptRastreio);
-
-    scriptRastreio.onload = function() {
-        console.log('Script de Rastreio do 17Track Carregado!');
-    };
-
     function doTrack() {
         var num = document.getElementById("YQNum").value;
-        if(num===""){
-            alert("Por favor preencha o código de rastreio corretamente.");
+        if (num === "") {
+            alert("Por favor, preencha o código de rastreio corretamente.");
             return;
         }
-        // Inicia o rastreio com o código inserido pelo usuário
-        YQV5.trackSingle({
-            YQ_ContainerId: "YQContainer", // Elemento onde será exibido o rastreio
-            YQ_Height: 600, // Altura do container de rastreio
-            YQ_Fc: "0", // Desabilita a exibição de informações adicionais
-            YQ_Lang: "pt", // Define a língua para português
-            YQ_Num: num // Código de rastreio inserido
-        });
+
+        // Substitui o link para o serviço Postal Ninja
+        var trackUrl = "https://postal.ninja/pt/track#/" + num;
+
+        // Abre o link de rastreio em uma nova aba
+        window.open(trackUrl, "_blank");
     }
-}
 </script>
 
 </body>
